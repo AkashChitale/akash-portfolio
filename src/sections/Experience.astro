@@ -1,0 +1,40 @@
+---
+import SectionHeading from "../components/SectionHeading.astro";
+import { experience } from "../data/site";
+---
+
+<section id="experience" class="section container">
+  <SectionHeading
+    number="02"
+    label="IN PRACTICE"
+    title="Engineering with a real product team."
+  />
+  <div class="experience-grid">
+    <div class="experience-meta">
+      <span class="experience-line" aria-hidden="true"></span>
+      <p class="mono">PROFESSIONAL EXPERIENCE</p>
+      <h3>{experience.company}</h3>
+      <p class="role">{experience.role}</p>
+      <p class="muted">{experience.area}</p>
+      <div class="tags">
+        {experience.tags.map((tag) => (
+          <span>{tag}</span>
+        ))}
+      </div>
+    </div>
+    <div class="experience-content">
+      <p class="lead">{experience.summary}</p>
+      <ul>
+        {experience.contributions.map((item) => (
+          <li>
+            <h4>{item.title}</h4>
+            <p>{item.text}</p>
+          </li>
+        ))}
+      </ul>
+      <p class="experience-note mono">
+        Selected contributions. No internal or confidential details.
+      </p>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,17 @@
+---
+import { site } from "../data/site";
+import Icon from "./Icon.astro";
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+---
+
+<a
+  class:list={["button", compact ? "button-small" : "button-secondary"]}
+  href={site.resume.available ? site.resume.path : "/resume/"}
+  download={site.resume.available || undefined}
+>
+  {compact ? "Resume" : "Download resume"}
+  <Icon name="download" size={16} />
+</a>

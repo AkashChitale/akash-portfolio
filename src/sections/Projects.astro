@@ -1,0 +1,69 @@
+---
+import SectionHeading from "../components/SectionHeading.astro";
+import Icon from "../components/Icon.astro";
+import { projects } from "../data/projects";
+---
+
+<section id="projects" class="section projects-section">
+  <div class="container">
+    <div class="section-header-row">
+      <SectionHeading
+        number="03"
+        label="SELECTED ENGINEERING WORK"
+        title="More than the happy path."
+        description="A closer look at the systems, the tradeoffs, and the decisions behind them."
+      />
+      <span class="mono section-side-note">
+        03 PROJECTS / BUILT WITH INTENT
+      </span>
+    </div>
+    <div class="project-list">
+      {projects.map((project) => (
+        <article class="project-row">
+          <div class="project-index mono">{project.number}</div>
+          <div class="project-main">
+            <p class="mono project-kind">{project.kind}</p>
+            <h3>
+              <a href={`/projects/${project.slug}/`}>
+                {project.name}
+                <Icon name="external" size={22} />
+              </a>
+            </h3>
+            <p class="project-description">{project.description}</p>
+            <div class="project-tech mono">
+              {project.technologies.join(" / ")}
+            </div>
+            <div class="project-links">
+              <a class="text-link" href={`/projects/${project.slug}/`}>
+                Read case study
+                <Icon name="arrow" size={17} />
+              </a>
+              {project.repo ? (
+                <a class="subtle-link" href={project.repo}>
+                  <Icon name="github" size={16} />
+                  Repository
+                </a>
+              ) : (
+                <span class="repo-pending">
+                  <Icon name="github" size={16} />
+                  Repository coming soon
+                </span>
+              )}
+            </div>
+          </div>
+          <div class="project-concepts">
+            <span class="mono">ENGINEERING FOCUS</span>
+            <ul>
+              {project.concepts.map((concept) => (
+                <li>{concept}</li>
+              ))}
+            </ul>
+            <span class="project-metric">
+              <span aria-hidden="true">↳</span> {project.metric}
+            </span>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

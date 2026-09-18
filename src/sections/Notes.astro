@@ -1,0 +1,46 @@
+---
+import { getCollection } from "astro:content";
+import SectionHeading from "../components/SectionHeading.astro";
+import Icon from "../components/Icon.astro";
+const notes = (await getCollection("notes")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<section id="notes" class="section container">
+  <div class="notes-grid">
+    <SectionHeading
+      number="05"
+      label="THINKING IN PUBLIC"
+      title="Engineering notes."
+      description="Working through the ideas behind the implementation. Articles are in preparation."
+    />
+    <div class="notes-list">
+      {notes.slice(0, 3).map((note) => (
+        <article class="note-row">
+          <div>
+            <p class="mono">{note.data.category}</p>
+            <h3>
+              {note.data.draft ? (
+                note.data.title
+              ) : (
+                <a href={`/notes/${note.id}/`}>{note.data.title}</a>
+              )}
+            </h3>
+            <p class="muted">{note.data.description}</p>
+          </div>
+          {note.data.draft ? (
+            <span class="note-status mono">IN PREPARATION</span>
+          ) : (
+            <a
+              href={`/notes/${note.id}/`}
+              aria-label={`Read ${note.data.title}`}
+            >
+              <Icon name="arrow" />
+            </a>
+          )}
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

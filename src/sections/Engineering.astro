@@ -1,0 +1,33 @@
+---
+import SectionHeading from "../components/SectionHeading.astro";
+import { principles } from "../data/site";
+---
+
+<section id="engineering" class="section container">
+  <SectionHeading
+    number="04"
+    label="ENGINEERING APPROACH"
+    title="How I build."
+    description="Tools matter. Understanding why and where to use them matters more."
+  />
+  <div class="principles-grid">
+    {principles.map((item) => (
+      <article class="principle">
+        <span class="mono principle-number">{item.number}</span>
+        <h3>{item.title}</h3>
+        <p class="principle-detail">{item.detail}</p>
+        <p class="muted">{item.items}</p>
+      </article>
+    ))}
+  </div>
+  <div class="fundamentals">
+    <span class="mono">THE FOUNDATION</span>
+    <p>
+      C++ · TypeScript · JavaScript · SQL
+      <span>
+        Data structures & algorithms · OOP · DBMS · Operating systems · Computer
+        networks
+      </span>
+    </p>
+  </div>
+</section>

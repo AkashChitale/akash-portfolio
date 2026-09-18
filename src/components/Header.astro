@@ -1,0 +1,60 @@
+---
+import { navigation, site } from "../data/site";
+import Icon from "./Icon.astro";
+import ProfileLink from "./ProfileLink.astro";
+import ResumeLink from "./ResumeLink.astro";
+const home = Astro.url.pathname === "/";
+---
+
+<header class="site-header">
+  <div class="nav-shell container">
+    <a class="wordmark" href="/" aria-label={`${site.name} — home`}>
+      <span class="monogram" aria-hidden="true">
+        ac<span>.</span>
+      </span>
+      <span>{site.name}</span>
+    </a>
+    <nav class="desktop-nav" aria-label="Main navigation">
+      {navigation.map((item) => (
+        <a href={`${home ? "" : "/"}#${item.id}`} data-nav={item.id}>
+          {item.label}
+        </a>
+      ))}
+    </nav>
+    <div class="nav-actions">
+      <div class="nav-profiles">
+        <ProfileLink profile="github" iconOnly />
+        <ProfileLink profile="linkedin" iconOnly />
+      </div>
+      <button
+        class="icon-button theme-toggle"
+        type="button"
+        aria-label="Switch color theme"
+        hidden
+      >
+        <span class="theme-sun">
+          <Icon name="sun" />
+        </span>
+        <span class="theme-moon">
+          <Icon name="moon" />
+        </span>
+      </button>
+      <ResumeLink compact />
+      <details class="mobile-menu">
+        <summary aria-label="Navigation menu">
+          <span></span>
+          <span></span>
+        </summary>
+        <nav aria-label="Mobile navigation">
+          {navigation.map((item) => (
+            <a href={`${home ? "" : "/"}#${item.id}`}>{item.label}</a>
+          ))}
+          <div class="mobile-profiles">
+            <ProfileLink profile="github" />
+            <ProfileLink profile="linkedin" />
+          </div>
+        </nav>
+      </details>
+    </div>
+  </div>
+</header>

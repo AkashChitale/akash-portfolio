@@ -1,0 +1,125 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Icon from "../../components/Icon.astro";
+import { projects, type Project } from "../../data/projects";
+export function getStaticPaths() {
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+interface Props {
+  project: Project;
+}
+const { project } = Astro.props;
+const id = (title: string) =>
+  title.toLowerCase().replaceAll(/[^a-z0-9]+/g, "-");
+const headings = [
+  "Overview",
+  "Problem",
+  "Requirements",
+  "Architecture",
+  ...project.sections.slice(2).map((section) => section.title),
+];
+---
+
+<BaseLayout
+  title={`${project.name} — Akash Chitale`}
+  description={project.description}
+  project
+>
+  <header class="case-hero container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span aria-hidden="true">/</span>
+      <a href="/#projects">Engineering work</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{project.number}</span>
+    </nav>
+    <p class="eyebrow mono">
+      CASE STUDY {project.number} / {project.kind}
+    </p>
+    <h1>{project.name}</h1>
+    <p class="case-intro">{project.description}</p>
+    <div class="tags">
+      {project.technologies.map((tech) => (
+        <span>{tech}</span>
+      ))}
+    </div>
+  </header>
+  <div class="case-shell container">
+    <aside class="case-toc">
+      <p class="mono">IN THIS CASE STUDY</p>
+      <nav aria-label="Case study contents">
+        {headings.map((title) => (
+          <a href={`#${id(title)}`}>{title}</a>
+        ))}
+      </nav>
+    </aside>
+    <div>
+      <section id="overview" class="case-section">
+        <h2>Overview</h2>
+        <div class="prose">
+          <p>{project.overview}</p>
+        </div>
+      </section>
+      {project.sections.map((section, index) => (
+        <>
+          <section id={id(section.title)} class="case-section">
+            <h2>{section.title}</h2>
+            <div class="prose">
+              {section.paragraphs?.map((paragraph) => (
+                <p>{paragraph}</p>
+              ))}
+              {section.bullets && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li>{bullet}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </section>
+          {index === 1 && (
+            <section id="architecture" class="case-section">
+              <h2>Architecture</h2>
+              <figure class="architecture">
+                <ol class="architecture-flow">
+                  {project.flow.map((step) => (
+                    <li>{step}</li>
+                  ))}
+                </ol>
+                <div class="architecture-support">
+                  {project.supporting.map((service) => (
+                    <span>{service}</span>
+                  ))}
+                </div>
+                <figcaption>
+                  Conceptual flow · supporting capabilities shown below the
+                  primary path
+                </figcaption>
+              </figure>
+            </section>
+          )}
+        </>
+      ))}
+      <div class="case-end">
+        <a class="text-link" href="/#projects">
+          Explore more engineering work
+          <Icon name="arrow" />
+        </a>
+        {project.repo ? (
+          <a class="subtle-link" href={project.repo}>
+            <Icon name="github" />
+            View repository
+          </a>
+        ) : (
+          <span class="repo-pending">
+            <Icon name="github" />
+            Repository link coming soon
+          </span>
+        )}
+      </div>
+    </div>
+  </div>
+</BaseLayout>

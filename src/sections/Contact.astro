@@ -1,0 +1,37 @@
+---
+import SectionHeading from "../components/SectionHeading.astro";
+import ProfileLink from "../components/ProfileLink.astro";
+import Icon from "../components/Icon.astro";
+import { site } from "../data/site";
+---
+
+<section id="contact" class="section container contact-section">
+  <SectionHeading
+    number="06"
+    label="LET’S CONNECT"
+    title="Good problems. Thoughtful people."
+  />
+  <div class="contact-bottom">
+    <p>
+      Interested in backend engineering, scalable systems, and challenging
+      software problems.
+    </p>
+    <div class="contact-actions">
+      {site.profiles.email ? (
+        <a class="contact-email" href={`mailto:${site.profiles.email}`}>
+          Say hello
+          <Icon name="external" size={24} />
+        </a>
+      ) : (
+        <span class="contact-email muted">
+          Email coming soon
+          <Icon name="mail" size={24} />
+        </span>
+      )}
+      <div class="contact-profiles">
+        <ProfileLink profile="github" />
+        <ProfileLink profile="linkedin" />
+      </div>
+    </div>
+  </div>
+</section>

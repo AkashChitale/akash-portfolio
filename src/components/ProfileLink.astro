@@ -1,0 +1,43 @@
+---
+import Icon from "./Icon.astro";
+import { site } from "../data/site";
+interface Props {
+  profile: keyof typeof site.profiles;
+  iconOnly?: boolean;
+}
+const { profile, iconOnly = false } = Astro.props;
+const labels = {
+  github: "GitHub",
+  linkedin: "LinkedIn",
+  leetcode: "LeetCode",
+  email: "Email",
+};
+const url = site.profiles[profile];
+const icon =
+  profile === "email" ? "mail" : profile === "leetcode" ? "external" : profile;
+---
+
+{url ? (
+  <a
+    class:list={["profile-link", { "icon-button": iconOnly }]}
+    href={profile === "email" ? `mailto:${url}` : url}
+    aria-label={labels[profile]}
+  >
+    <Icon name={icon} />
+    {!iconOnly && labels[profile]}
+  </a>
+) : (
+  <span
+    class:list={["profile-link", "unavailable", { "icon-button": iconOnly }]}
+    role={iconOnly ? "img" : undefined}
+    aria-label={iconOnly ? `${labels[profile]} — link coming soon` : undefined}
+    title={`${labels[profile]} — link coming soon`}
+  >
+    <Icon name={icon} />
+    {!iconOnly && (
+      <>
+        {labels[profile]} <span class="sr-only">— link coming soon</span>
+      </>
+    )}
+  </span>
+)}

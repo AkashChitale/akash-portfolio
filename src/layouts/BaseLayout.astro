@@ -1,0 +1,97 @@
+---
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { site } from "../data/site";
+import "../styles/global.css";
+interface Props {
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+  project?: boolean;
+}
+const {
+  title = "Akash Chitale — Software Engineer",
+  description = site.description,
+  noindex = false,
+  project = false,
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": `${Astro.site}#person`,
+      name: site.name,
+      url: Astro.site,
+      description: site.description,
+      sameAs: Object.entries(site.profiles)
+        .filter(([key, value]) => key !== "email" && value)
+        .map(([, value]) => value),
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${Astro.site}#website`,
+      name: `${site.name} — Engineering Portfolio`,
+      url: Astro.site,
+      author: { "@id": `${Astro.site}#person` },
+    },
+    ...(project
+      ? [
+          {
+            "@type": "CreativeWork",
+            name: title,
+            description,
+            url: canonical.href,
+            author: { "@id": `${Astro.site}#person` },
+          },
+        ]
+      : []),
+  ],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta
+      name="robots"
+      content={noindex ? "noindex, follow" : "index, follow"}
+    />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#10151d" />
+    <meta property="og:type" content={project ? "article" : "website"} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={site.name} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <script is:inline src="/theme.js"></script>
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(schema).replace(/</g, "\\u003c")}
+    ></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">
+      Skip to content
+    </a>
+    <Header />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      import "../lib/interactions";
+    </script>
+  </body>
+</html>

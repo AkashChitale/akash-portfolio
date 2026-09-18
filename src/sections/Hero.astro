@@ -1,0 +1,67 @@
+---
+import SystemDiagram from "../components/SystemDiagram.astro";
+import Icon from "../components/Icon.astro";
+import ResumeLink from "../components/ResumeLink.astro";
+import ProfileLink from "../components/ProfileLink.astro";
+import { snapshot } from "../data/site";
+---
+
+<section class="hero container" aria-labelledby="hero-title">
+  <div class="hero-kicker mono">
+    <span>SOFTWARE ENGINEER</span>
+    <span class="hero-location">
+      PUNE, INDIA <span aria-hidden="true">↗</span>
+    </span>
+  </div>
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <h1 id="hero-title">
+        Good software.
+        <br />
+        Built{" "}
+        <span class="accent">
+          from the
+          <br class="desktop-break" /> inside out.
+        </span>
+      </h1>
+      <p class="hero-position">
+        I’m Akash. I build for what’s beneath the interface.
+      </p>
+      <p class="hero-description">
+        Backend systems, scalable architecture, and performance. A Computer
+        Engineering student building reliable software, from API design to
+        production.
+      </p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="#projects">
+          View engineering work
+          <Icon name="arrow" />
+        </a>
+        <ResumeLink />
+      </div>
+      <div class="hero-profiles">
+        <ProfileLink profile="github" />
+        <ProfileLink profile="linkedin" />
+        <span class="mono">FINAL YEAR · VIIT PUNE</span>
+      </div>
+    </div>
+    <div class="hero-aside">
+      <SystemDiagram />
+      <div class="hero-aside-note mono">
+        <span>DESIGNED WITH INTENT</span>
+        <span>BUILT TO BE UNDERSTOOD</span>
+      </div>
+    </div>
+  </div>
+  <div class="snapshot" aria-label="Engineering snapshot">
+    {snapshot.map((item) => (
+      <div class="snapshot-item">
+        <div class="snapshot-value">
+          {item.value}
+          {item.suffix && <span>{item.suffix}</span>}
+        </div>
+        <p>{item.label}</p>
+      </div>
+    ))}
+  </div>
+</section>

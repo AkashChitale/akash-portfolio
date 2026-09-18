@@ -1,0 +1,84 @@
+---
+const endpoint = import.meta.env.PUBLIC_SYSTEMS_LAB_URL || "";
+---
+
+<aside
+  class="systems-lab container"
+  data-lab-endpoint={endpoint}
+  aria-labelledby="lab-title"
+>
+  <div>
+    <p class="mono eyebrow">AN OPTIONAL EXPERIMENT</p>
+    <h2 id="lab-title">Systems Lab</h2>
+    <p>
+      A small window into a future service: deployment, health, and response
+      time.
+    </p>
+  </div>
+  <div class="lab-result">
+    <span class="lab-status mono" data-lab-status role="status">
+      {endpoint ? "Status available with JavaScript" : "NOT CONNECTED YET"}
+    </span>
+    <p data-lab-message>
+      {endpoint
+        ? "The portfolio works independently of this service."
+        : "An independent API. A future addition."}
+    </p>
+    <dl data-lab-details hidden></dl>
+  </div>
+</aside>
+<script>
+  import { fetchStatus } from "../lib/lab-client";
+  const panel = document.querySelector<HTMLElement>("[data-lab-endpoint]");
+  const endpoint = panel?.dataset.labEndpoint;
+  if (endpoint && panel) {
+    const run = async () => {
+      const status = panel.querySelector<HTMLElement>("[data-lab-status]");
+      const message = panel.querySelector<HTMLElement>("[data-lab-message]");
+      const details = panel.querySelector<HTMLElement>("[data-lab-details]");
+      if (!status || !message || !details) return;
+      status.textContent = "Checking service…";
+      try {
+        const data = await fetchStatus(endpoint);
+        status.textContent =
+          data.status === "healthy"
+            ? "Service healthy"
+            : data.status === "degraded"
+              ? "Service degraded"
+              : "Service unhealthy";
+        message.textContent =
+          "A snapshot from the independent Systems Lab API.";
+        const fields = [
+          ["Version", data.version],
+          ["Region", data.region],
+          ["Uptime", data.uptime],
+          ["Response latency", `${data.responseTime} ms`],
+          ["Last deployment", new Date(data.deployedAt).toLocaleString()],
+        ];
+        for (const [label, value] of fields) {
+          const row = document.createElement("div");
+          const dt = document.createElement("dt");
+          const dd = document.createElement("dd");
+          dt.textContent = label ?? "";
+          dd.textContent = value ?? "";
+          row.append(dt, dd);
+          details.append(row);
+        }
+        details.hidden = false;
+      } catch {
+        status.textContent = "Service unavailable";
+        message.textContent =
+          "The lab could not be reached. Everything else is ready to explore.";
+      }
+    };
+    if (document.readyState === "complete") void run();
+    else
+      window.addEventListener(
+        "load",
+        () => {
+          void run();
+        },
+        { once: true },
+      );
+  }
+</script>

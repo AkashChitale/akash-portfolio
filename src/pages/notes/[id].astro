@@ -1,0 +1,45 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+export async function getStaticPaths() {
+  return (await getCollection("notes", ({ data }) => !data.draft)).map(
+    (note) => ({ params: { id: note.id }, props: { note } }),
+  );
+}
+const { note } = Astro.props;
+const { Content } = await render(note);
+---
+
+<BaseLayout
+  title={`${note.data.title} — Akash Chitale`}
+  description={note.data.description}
+  project
+>
+  <article class="article container">
+    <a class="text-link" href="/#notes">
+      ← Engineering notes
+    </a>
+    <p class="eyebrow mono mt-8">
+      {note.data.category}
+      {note.data.publishedAt && (
+        <>
+          {" "}
+          /{" "}
+          <time datetime={note.data.publishedAt.toISOString()}>
+            {note.data.publishedAt.toLocaleDateString("en-IN", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+              timeZone: "UTC",
+            })}
+          </time>
+        </>
+      )}
+    </p>
+    <h1>{note.data.title}</h1>
+    <p class="lead muted mb-10">{note.data.description}</p>
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>

@@ -1,0 +1,60 @@
+---
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+---
+
+<figure
+  class:list={["system-diagram", { compact }]}
+  aria-label="Conceptual request flow: client to API, services, database, cache and background worker"
+>
+  <div class="diagram-topline mono">
+    <span>REQUEST → RESPONSE</span>
+    <span>FIG. 01</span>
+  </div>
+  <div class="topology">
+    <svg
+      class="connections"
+      viewBox="0 0 420 310"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <path d="M55 150H163M210 52V128M210 174V245M255 150H365V52H255M255 150H365V245H255" />
+      <path class="accent-path" d="M55 150H163M210 174V245" />
+      <circle cx="110" cy="150" r="3" />
+      <circle cx="210" cy="212" r="3" />
+    </svg>
+    <div class="node node-client">
+      <span class="node-symbol">⌘</span>
+      <span>Client</span>
+    </div>
+    <div class="node node-api">
+      <span class="node-symbol">↔</span>
+      <span>API layer</span>
+      <small>authorize</small>
+    </div>
+    <div class="node node-cache">
+      <span class="node-mark"></span>
+      <span>Cache</span>
+      <small>Redis</small>
+    </div>
+    <div class="node node-data">
+      <span class="node-mark"></span>
+      <span>Database</span>
+      <small>persist</small>
+    </div>
+    <div class="node node-jobs">
+      <span class="node-mark"></span>
+      <span>Worker</span>
+      <small>async jobs</small>
+    </div>
+    <span class="flow-label mono">HTTPS</span>
+  </div>
+  <figcaption>
+    <span class="diagram-tick" aria-hidden="true">
+      ↳
+    </span>{" "}
+    Reliability is a design decision.
+  </figcaption>
+</figure>

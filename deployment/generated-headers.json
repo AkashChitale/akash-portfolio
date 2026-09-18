@@ -1,0 +1,8 @@
+{
+  "Content-Security-Policy": "default-src 'self'; script-src 'self' 'sha256-48aMJe3x+B3dOYzkd8MQ1l+Inqv5glRuQfQGxPMjPfY=' 'sha256-uuoVexbmFobiGgvm2w1XS/f+akJbfJZsk+l5y6CMiu8=' 'sha256-4p3NRIf+ZgyGeOB79/d2tlwVuebDY5G85peIULQghzg=' 'sha256-x3ZI99mqXKv5qjE4BtXXmGXkJTOR2p++zndhGQeYHaI='; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests",
+  "X-Content-Type-Options": "nosniff",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+  "Strict-Transport-Security": "max-age=31536000",
+  "X-Frame-Options": "DENY"
+}
