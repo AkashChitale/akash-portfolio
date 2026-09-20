@@ -4,6 +4,7 @@ const endpoint = import.meta.env.PUBLIC_SYSTEMS_LAB_URL || "";
 
 <aside
   class="systems-lab container"
+  hidden={!endpoint}
   data-lab-endpoint={endpoint}
   aria-labelledby="lab-title"
 >
@@ -32,6 +33,7 @@ const endpoint = import.meta.env.PUBLIC_SYSTEMS_LAB_URL || "";
   const panel = document.querySelector<HTMLElement>("[data-lab-endpoint]");
   const endpoint = panel?.dataset.labEndpoint;
   if (endpoint && panel) {
+    panel.hidden = false;
     const run = async () => {
       const status = panel.querySelector<HTMLElement>("[data-lab-status]");
       const message = panel.querySelector<HTMLElement>("[data-lab-message]");

@@ -108,16 +108,11 @@ const headings = [
           Explore more engineering work
           <Icon name="arrow" />
         </a>
-        {project.repo ? (
+        {project.repo && (
           <a class="subtle-link" href={project.repo}>
             <Icon name="github" />
             View repository
           </a>
-        ) : (
-          <span class="repo-pending">
-            <Icon name="github" />
-            Repository link coming soon
-          </span>
         )}
       </div>
     </div>

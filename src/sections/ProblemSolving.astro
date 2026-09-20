@@ -1,5 +1,6 @@
 ---
 import ProfileLink from "../components/ProfileLink.astro";
+import { problemSolving } from "../data/site";
 ---
 
 <section class="problem-solving container" aria-labelledby="problem-title">
@@ -7,8 +8,8 @@ import ProfileLink from "../components/ProfileLink.astro";
     <p class="eyebrow mono">ALGORITHMIC FOUNDATION</p>
     <h2 id="problem-title">A habit of solving hard problems.</h2>
     <p>
-      1,200+ problems have strengthened my algorithmic thinking, complexity
-      analysis, debugging, and reasoning under constraints.
+      {problemSolving.solved} problems have strengthened my algorithmic
+      thinking, complexity analysis, debugging, and reasoning under constraints.
     </p>
     <ProfileLink profile="leetcode" />
   </div>
@@ -16,13 +17,15 @@ import ProfileLink from "../components/ProfileLink.astro";
     <div>
       <dt>Contest rating</dt>
       <dd>
-        1,957<span>approx. current</span>
+        {problemSolving.rating}
+        <span>approx. rating</span>
       </dd>
     </div>
     <div>
       <dt>Peak rating</dt>
       <dd>
-        2,084<span>LeetCode</span>
+        {problemSolving.peak}
+        <span>LeetCode</span>
       </dd>
     </div>
   </dl>

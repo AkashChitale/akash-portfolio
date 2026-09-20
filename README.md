@@ -64,9 +64,9 @@ WhiskerBond is professional experience, not a public-source project. The third c
 
 ## Personalization before publishing
 
-1. In `src/data/site.ts`, set `profiles.github`, `profiles.linkedin`, `profiles.leetcode`, and `profiles.email`. Use full HTTPS profile URLs and a plain email address. Empty profiles render as unavailable text, never dead links.
+1. Review `profiles.github`, `profiles.linkedin`, `profiles.leetcode`, and `profiles.email` in `src/data/site.ts`; these were restored from the original portfolio in Git history. Use full HTTPS profile URLs and a plain email address. Empty profile links are hidden.
 2. Put the real résumé in `public/resume.pdf`, then set `site.resume.available` to `true`. The navigation and hero will download `/resume.pdf`. No fabricated PDF is supplied.
-3. Set each `repo` in `src/data/projects.ts` to its actual repository URL. Until then, the site displays “Repository coming soon”.
+3. The portfolio repository is linked in `src/data/projects.ts`. Add the ELMS and task-system `repo` URLs when available; unavailable repository actions stay hidden.
 4. Set the build environment `SITE_URL=https://your-domain.example`. The default `https://portfolio.example.com` is a clearly documented placeholder and must not be used for a public production release.
 5. Review profile details, current/peak contest ratings, placement wording, and case-study descriptions for currency. The supplied metrics are static, not live.
 
@@ -113,7 +113,7 @@ Lighthouse targets: at least 95 for performance, accessibility, best practices, 
 
 ## Accessibility
 
-Semantic landmarks, a keyboard skip link, visible focus indicators, labeled theme controls, native mobile-menu behavior, correct heading levels, both color themes, and reduced-motion support are built in. Links remain in the same browsing context. Missing links are plain text. The optional API communicates asynchronously through a polite status region. Section and case-study navigation account for the sticky header.
+Semantic landmarks, a keyboard skip link, visible focus indicators, labeled theme controls, native mobile-menu behavior, correct heading levels, both color themes, and reduced-motion support are built in. Links remain in the same browsing context. Unavailable links are hidden; the Resume action opens the existing information page until the real PDF is supplied. The optional API communicates asynchronously through a polite status region. Section and case-study navigation account for the sticky header.
 
 Browser QA should cover 320, 375, 768, 1024, and 1440+ widths, keyboard use, 200% text resizing, both themes, no JavaScript, and unavailable API states. A passing lint/build is not an accessibility certification.
 
@@ -137,7 +137,7 @@ See [deployment/AWS.md](deployment/AWS.md) for concrete routing, caching, header
 
 ## Future Systems Lab
 
-Leave `PUBLIC_SYSTEMS_LAB_URL` unset to disable all lab network traffic. When a public endpoint exists, configure `PUBLIC_SYSTEMS_LAB_URL=https://api.your-domain.example/api/status` **at build time**, then rebuild. It is public configuration, never a secret.
+Leave `PUBLIC_SYSTEMS_LAB_URL` unset to hide the inactive Lab panel and disable all lab network traffic. When a public endpoint exists, configure `PUBLIC_SYSTEMS_LAB_URL=https://api.your-domain.example/api/status` **at build time**, then rebuild. It is public configuration, never a secret.
 
 Expected JSON:
 

@@ -251,7 +251,7 @@ export const projects: Project[] = [
       "Independent API",
     ],
     metric: "No client framework runtime",
-    repo: "",
+    repo: "https://github.com/AkashChitale/akash-portfolio",
     flow: [
       "Typed content & Markdown",
       "Astro build",
@@ -334,7 +334,7 @@ export const projects: Project[] = [
       {
         title: "Future improvements",
         bullets: [
-          "Add real profile links, a résumé, and project repositories.",
+          "Add the résumé and remaining project repository links.",
           "Publish engineering notes after drafting and review.",
           "Deploy static assets to S3 behind CloudFront; attach a separate read-only API only when it exists.",
         ],

@@ -9,58 +9,73 @@ import { projects } from "../data/projects";
     <div class="section-header-row">
       <SectionHeading
         number="03"
-        label="SELECTED ENGINEERING WORK"
-        title="More than the happy path."
-        description="A closer look at the systems, the tradeoffs, and the decisions behind them."
+        label="DESIGN DECISIONS, IN CODE"
+        title="Selected engineering work."
+        description="Secure sessions. Reliable workflows. Less work on the request path."
       />
       <span class="mono section-side-note">
-        03 PROJECTS / BUILT WITH INTENT
+        {String(projects.length).padStart(2, "0")} CASE STUDIES
       </span>
     </div>
     <div class="project-list">
-      {projects.map((project) => (
-        <article class="project-row">
+      {projects.map((project, index) => (
+        <article
+          class:list={["project-row", { "project-featured": index === 0 }]}
+          aria-labelledby={`project-${project.slug}`}
+        >
           <div class="project-index mono">{project.number}</div>
           <div class="project-main">
-            <p class="mono project-kind">{project.kind}</p>
-            <h3>
-              <a href={`/projects/${project.slug}/`}>
-                {project.name}
-                <Icon name="external" size={22} />
-              </a>
-            </h3>
+            <p class="mono project-kind">
+              {index === 0 && <span class="featured-label">FEATURED</span>}
+              {project.kind}
+            </p>
+            <h3 id={`project-${project.slug}`}>{project.name}</h3>
             <p class="project-description">{project.description}</p>
             <div class="project-tech mono">
               {project.technologies.join(" / ")}
             </div>
             <div class="project-links">
-              <a class="text-link" href={`/projects/${project.slug}/`}>
+              <a
+                class="project-case-link"
+                href={`/projects/${project.slug}/`}
+                aria-label={`Read case study: ${project.name}`}
+              >
                 Read case study
-                <Icon name="arrow" size={17} />
+                <Icon name="arrow" size={18} />
               </a>
-              {project.repo ? (
-                <a class="subtle-link" href={project.repo}>
+              {project.repo && (
+                <a
+                  class="subtle-link project-repo"
+                  href={project.repo}
+                  aria-label={`GitHub repository: ${project.name}`}
+                >
                   <Icon name="github" size={16} />
-                  Repository
+                  GitHub
+                  <Icon name="external" size={13} />
                 </a>
-              ) : (
-                <span class="repo-pending">
-                  <Icon name="github" size={16} />
-                  Repository coming soon
-                </span>
               )}
             </div>
           </div>
           <div class="project-concepts">
+            <span class="project-metric">{project.metric}</span>
             <span class="mono">ENGINEERING FOCUS</span>
             <ul>
               {project.concepts.map((concept) => (
                 <li>{concept}</li>
               ))}
             </ul>
-            <span class="project-metric">
-              <span aria-hidden="true">↳</span> {project.metric}
-            </span>
+            {index === 0 && (
+              <div
+                class="project-flow"
+                aria-label="Core path: client, API, database"
+              >
+                <span>Client</span>
+                <Icon name="arrow" size={13} />
+                <span>API</span>
+                <Icon name="arrow" size={13} />
+                <span>Database</span>
+              </div>
+            )}
           </div>
         </article>
       ))}

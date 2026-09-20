@@ -1,4 +1,5 @@
 ---
+import Icon from "./Icon.astro";
 interface Props {
   compact?: boolean;
 }
@@ -47,14 +48,18 @@ const { compact = false } = Astro.props;
     <div class="node node-jobs">
       <span class="node-mark"></span>
       <span>Worker</span>
-      <small>async jobs</small>
+      <small>async</small>
     </div>
     <span class="flow-label mono">HTTPS</span>
   </div>
   <figcaption>
-    <span class="diagram-tick" aria-hidden="true">
-      ↳
-    </span>{" "}
-    Reliability is a design decision.
+    <a
+      class="diagram-link"
+      href="/#engineering"
+      aria-label="Explore how I build reliable systems"
+    >
+      <span>Reliability is a design decision.</span>
+      <Icon name="arrow" size={16} />
+    </a>
   </figcaption>
 </figure>

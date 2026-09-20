@@ -17,27 +17,22 @@ const icon =
   profile === "email" ? "mail" : profile === "leetcode" ? "external" : profile;
 ---
 
-{url ? (
+{url && (
   <a
     class:list={["profile-link", { "icon-button": iconOnly }]}
     href={profile === "email" ? `mailto:${url}` : url}
     aria-label={labels[profile]}
   >
     <Icon name={icon} />
-    {!iconOnly && labels[profile]}
-  </a>
-) : (
-  <span
-    class:list={["profile-link", "unavailable", { "icon-button": iconOnly }]}
-    role={iconOnly ? "img" : undefined}
-    aria-label={iconOnly ? `${labels[profile]} — link coming soon` : undefined}
-    title={`${labels[profile]} — link coming soon`}
-  >
-    <Icon name={icon} />
     {!iconOnly && (
       <>
-        {labels[profile]} <span class="sr-only">— link coming soon</span>
+        {labels[profile]}
+        {profile !== "email" && profile !== "leetcode" && (
+          <span class="profile-out">
+            <Icon name="external" size={13} />
+          </span>
+        )}
       </>
     )}
-  </span>
+  </a>
 )}

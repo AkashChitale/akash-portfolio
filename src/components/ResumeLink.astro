@@ -11,7 +11,10 @@ const { compact = false } = Astro.props;
   class:list={["button", compact ? "button-small" : "button-secondary"]}
   href={site.resume.available ? site.resume.path : "/resume/"}
   download={site.resume.available || undefined}
+  aria-label={
+    site.resume.available ? "Download resume (PDF)" : "Resume information"
+  }
 >
-  {compact ? "Resume" : "Download resume"}
-  <Icon name="download" size={16} />
+  Resume
+  <Icon name={site.resume.available ? "download" : "arrow"} size={16} />
 </a>

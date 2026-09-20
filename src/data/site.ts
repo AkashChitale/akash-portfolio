@@ -4,8 +4,13 @@ export const site = {
   description:
     "Computer Engineering student focused on backend systems, scalable architecture, and performance. Explore the engineering work of Akash Chitale.",
   location: "Pune, India",
-  // PERSONALIZE: use full HTTPS URLs and a real email. Empty values render as unavailable.
-  profiles: { github: "", linkedin: "", leetcode: "", email: "" },
+  // Profile links recovered from the owner’s original portfolio. Empty links stay hidden.
+  profiles: {
+    github: "https://github.com/AkashChitale",
+    linkedin: "https://www.linkedin.com/in/akash-chitale-207a4a318/",
+    leetcode: "https://leetcode.com/u/Akash124124/",
+    email: "akashchitale0@gmail.com",
+  },
   resume: { path: "/resume.pdf", available: false },
 } as const;
 
@@ -17,9 +22,16 @@ export const navigation = [
   { label: "Contact", id: "contact" },
 ] as const;
 
+// Supplied profile metrics, kept in one place; not a live contest-rating feed.
+export const problemSolving = {
+  solved: "1,300+",
+  rating: "1,957",
+  peak: "2,084",
+} as const;
+
 export const snapshot = [
-  { value: "1,200+", label: "DSA problems solved" },
-  { value: "1,957", label: "LeetCode contest rating" },
+  { value: problemSolving.solved, label: "DSA problems solved" },
+  { value: problemSolving.rating, label: "LeetCode rating · approx." },
   { value: "9.1", suffix: "/ 10", label: "CGPA · VIIT Pune" },
   { value: "200+", label: "ELMS backend tests" },
 ];
@@ -29,7 +41,7 @@ export const experience = {
   role: "Software Engineering Intern",
   area: "Pet-care platform · Product engineering",
   summary:
-    "Working across the interface and the API layer of a community-driven pet-care platform.",
+    "Contributed to React interfaces and backend APIs for a community-driven pet-care platform.",
   contributions: [
     {
       title: "Feeds that keep moving.",
@@ -41,7 +53,7 @@ export const experience = {
     },
     {
       title: "Engineering in an existing codebase.",
-      text: "Developed React interfaces and backend APIs, debugged across application layers, and refined responsive mobile experiences.",
+      text: "Navigated and debugged a production codebase, with responsive experiences across mobile and desktop.",
     },
   ],
   tags: ["React", "Backend APIs", "TanStack Query", "Authorization"],

@@ -13,11 +13,11 @@ const notes = (await getCollection("notes")).sort(
       number="05"
       label="THINKING IN PUBLIC"
       title="Engineering notes."
-      description="Working through the ideas behind the implementation. Articles are in preparation."
+      description="Ideas I’m working through. These articles are still in preparation."
     />
     <div class="notes-list">
       {notes.slice(0, 3).map((note) => (
-        <article class="note-row">
+        <article class:list={["note-row", { "note-draft": note.data.draft }]}>
           <div>
             <p class="mono">{note.data.category}</p>
             <h3>
@@ -27,7 +27,7 @@ const notes = (await getCollection("notes")).sort(
                 <a href={`/notes/${note.id}/`}>{note.data.title}</a>
               )}
             </h3>
-            <p class="muted">{note.data.description}</p>
+            {!note.data.draft && <p class="muted">{note.data.description}</p>}
           </div>
           {note.data.draft ? (
             <span class="note-status mono">IN PREPARATION</span>
