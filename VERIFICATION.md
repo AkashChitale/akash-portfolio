@@ -1,3 +1,31 @@
+# Content accuracy verification — 24 September 2026
+
+Applied the owner-confirmed Task Management and ELMS audit context and public links. The subsequent résumé addition changed only its link component, access page, availability setting, and related copy. Stylesheets, general interactions, Systems Lab, accessibility behavior, dependencies, CI, and deployment architecture were preserved. The Astro default origin and example environment value now use the temporary approved domain, https://akashchitale.dev. Generated CSP hashes were refreshed for the changed metadata.
+
+## Executed checks
+
+- Lint passed; Astro/TypeScript checks reported 0 errors, warnings, and hints.
+- All 7 portfolio tests passed. The underlying Task Management and ELMS test suites were not run; their case studies explicitly attribute results and limitations to the supplied audits.
+- Production build passed: 6 HTML pages. Existing verification passed for 170 internal link/asset references, metadata, structured data, and draft exclusion.
+- Shipped JavaScript remains 1,982 gzip bytes. CSS output is 9,138 gzip bytes; stylesheet sources are unchanged. Lighthouse was not rerun for this content and résumé update.
+- Existing browser regression checks passed: responsive fit, themes, native navigation without JavaScript, keyboard navigation, reduced motion, 200% text sizing, 404 responses, and optional API failure scenarios.
+- Homepage and all case studies passed additional page and text-container overflow checks at 375, 768, 1440, and 1920 pixels. Screenshots and results are in artifacts/content-update/.
+- Existing accessibility checks detected zero violations across seven page/theme/viewport combinations.
+- Stale project claims, the prior LinkedIn URL, and the old test-count highlight were absent from current source and rendered project content. The generic hero diagram and broader engineering skills are separate from these project implementation claims.
+- All rendered external link destinations exactly match the approved URLs, including the mailto address. All three repository links render. Empty-repository guards remain unchanged in both renderers, and unavailable-action placeholders are absent. No project was marked HIDDEN in the supplied links.
+- Canonical URLs use the approved temporary domain. Existing 404 canonical behavior remains unchanged.
+- git diff --check passed.
+
+## External link verification limits
+
+Every visible HTTP(S) destination was requested. The LeetCode profile loaded through the web tool, although a direct automated request returned HTTP 403. GitHub profile/repository, LinkedIn, and temporary-domain requests returned timeouts, connection resets, or tool fetch failures. Their public availability could not be established in this environment; the exact owner-approved URLs were retained. Email syntax and its rendered mailto destination were checked, not mailbox delivery. Detailed network results are in artifacts/content-links.json.
+
+The unchanged CI workflow overrides SITE_URL and retains its pre-existing placeholder fallback. The GitHub repository variable must be set to the approved domain before using that workflow's build for publishing; no CI configuration or remote setting was changed.
+
+The supplied résumé is now available at /resume.pdf. Its source, public, and built copies are byte-identical (67,610 bytes). Browser checks confirmed HTTP 200 with application/pdf, native PDF navigation without forced download, an explicit download of the exact supplied file, and zero PDF requests on homepage load. The résumé page fits 375, 768, 1440, and 1920px; lint, typecheck, production build, and build verification passed after this addition. No public deployment was performed. The following report is historical and describes the earlier visual-polish build.
+
+---
+
 # Verification — 20 September 2026
 
 Focused visual polish of the existing engineering portfolio. The original hero typography, systems diagram, restrained green accent, and static-first architecture are preserved.

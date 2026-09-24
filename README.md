@@ -35,7 +35,7 @@ src/
   data/             Shared profile, experience, principles, project case studies
   layouts/          HTML document, metadata, structured data, shared shell
   lib/              Small progressive enhancements and independent API client
-  pages/            Home, static project routes, notes, résumé fallback, 404, SEO
+  pages/            Home, static project routes, notes, résumé access, 404, SEO
   sections/         Homepage composition
   styles/           Theme tokens, responsive design, interaction styles
 public/             Favicon, manifest, first-paint theme preference script
@@ -55,19 +55,19 @@ Tailwind supplies the CSS foundation and small utilities. Shared CSS tokens impl
 - `/projects/elms/` — Employee Leave Management System
 - `/projects/task-management/` — Task Management System
 - `/projects/portfolio/` — this site's actual architecture
-- `/resume/` — honest fallback until the PDF is supplied
+- `/resume/` — browser-view and download links for the supplied PDF
 - `/notes/<id>/` — generated only for published Markdown
 - `/404.html` — custom error page
 - `/robots.txt`, `/sitemap.xml`
 
-WhiskerBond is professional experience, not a public-source project. The third case study documents this portfolio itself. No unverified benchmarks or confidential details are included. Project claims are based on the supplied brief; the underlying project repositories have not been audited.
+WhiskerBond is professional experience, not a public-source project. The third case study documents this portfolio itself. No unverified benchmarks or confidential details are included. ELMS and Task Management content is based on owner-confirmed technical audit context. Implemented features, dormant scaffolding, test results, and known limitations are distinguished; the portfolio does not run those projects’ test suites. The generic hero topology and broader skills overview are not implementation diagrams for either project.
 
 ## Personalization before publishing
 
-1. Review `profiles.github`, `profiles.linkedin`, `profiles.leetcode`, and `profiles.email` in `src/data/site.ts`; these were restored from the original portfolio in Git history. Use full HTTPS profile URLs and a plain email address. Empty profile links are hidden.
-2. Put the real résumé in `public/resume.pdf`, then set `site.resume.available` to `true`. The navigation and hero will download `/resume.pdf`. No fabricated PDF is supplied.
-3. The portfolio repository is linked in `src/data/projects.ts`. Add the ELMS and task-system `repo` URLs when available; unavailable repository actions stay hidden.
-4. Set the build environment `SITE_URL=https://your-domain.example`. The default `https://portfolio.example.com` is a clearly documented placeholder and must not be used for a public production release.
+1. Review `profiles.github`, `profiles.linkedin`, `profiles.leetcode`, and `profiles.email` in `src/data/site.ts`; these are the owner-confirmed public links. Use full HTTPS profile URLs and a plain email address. Empty profile links are hidden.
+2. The supplied résumé is in `public/resume.pdf` with `site.resume.available` enabled. Navigation and hero links open the PDF in the browser; `/resume/` also offers an explicit download. Replace the PDF at the same path when updating it. The homepage does not preload it.
+3. All three confirmed repository URLs are centralized in `src/data/projects.ts`; an empty `repo` keeps that project’s repository actions hidden.
+4. The temporary default website origin is `https://akashchitale.dev`. Override it through the build environment `SITE_URL` when needed. The unchanged CI workflow supplies its own value: set the GitHub repository variable `SITE_URL` to the approved origin, or its existing placeholder fallback will override this local default. Domain configuration does not publish the site.
 5. Review profile details, current/peak contest ratings, placement wording, and case-study descriptions for currency. The supplied metrics are static, not live.
 
 No photo or project screenshots are needed for this design. If adding images later, use Astro's image tooling, explicit dimensions, descriptive alt text, and responsive assets. Do not publish broken image placeholders. Open Graph and X title/description metadata are present; a social image is not generated. A custom social image can be added later when available.
@@ -113,7 +113,7 @@ Lighthouse targets: at least 95 for performance, accessibility, best practices, 
 
 ## Accessibility
 
-Semantic landmarks, a keyboard skip link, visible focus indicators, labeled theme controls, native mobile-menu behavior, correct heading levels, both color themes, and reduced-motion support are built in. Links remain in the same browsing context. Unavailable links are hidden; the Resume action opens the existing information page until the real PDF is supplied. The optional API communicates asynchronously through a polite status region. Section and case-study navigation account for the sticky header.
+Semantic landmarks, a keyboard skip link, visible focus indicators, labeled theme controls, native mobile-menu behavior, correct heading levels, both color themes, and reduced-motion support are built in. Links remain in the same browsing context. Unavailable links are hidden; the Resume action opens the PDF in the browser, with a separate download action on `/resume/`. The optional API communicates asynchronously through a polite status region. Section and case-study navigation account for the sticky header.
 
 Browser QA should cover 320, 375, 768, 1024, and 1440+ widths, keyboard use, 200% text resizing, both themes, no JavaScript, and unavailable API states. A passing lint/build is not an accessibility certification.
 

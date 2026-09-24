@@ -26,107 +26,123 @@ export const projects: Project[] = [
     name: "Employee Leave Management System",
     kind: "FULL-STACK APPLICATION",
     description:
-      "A permission-aware leave system, built around secure sessions, approval workflows, and data integrity.",
-    technologies: ["React", "TypeScript", "Express", "PostgreSQL", "Prisma"],
-    concepts: [
-      "Token rotation",
-      "Role-based access",
-      "Transactional balances",
-      "Audit logging",
+      "A role-based leave system with centralized policy checks, approval workflows, and an auditable debit-and-reversal balance ledger.",
+    technologies: [
+      "React",
+      "TypeScript",
+      "Express",
+      "PostgreSQL",
+      "Prisma",
+      "TanStack Query",
     ],
-    metric: "200+ backend tests",
-    repo: "",
+    concepts: [
+      "Employee, Manager & HR roles",
+      "Hashed refresh tokens & rotation",
+      "Request locking & status checks",
+      "Balance debits & reversals",
+    ],
+    metric: "Debit-and-reversal balance ledger",
+    repo: "https://github.com/AkashChitale/employee-leave-management-system",
     flow: [
       "React client",
-      "Express API",
-      "Authentication & authorization",
+      "Express routes",
+      "Controllers",
       "Leave services",
       "Prisma",
       "PostgreSQL",
     ],
-    supporting: ["Refresh token lifecycle", "Notifications", "Audit logging"],
+    supporting: [
+      "Shared policy calculation",
+      "Balance transaction journal",
+      "Audit & notification services",
+    ],
     overview:
-      "Leave management is a coordination problem: different roles make decisions, balances change, and every transition needs to remain explainable. This project approaches those rules as a modular backend with an accessible React and TypeScript interface.",
+      "ELMS manages leave from eligibility calculation and submission through approval, withdrawal, and cancellation. Its strongest engineering decisions are the separation of HTTP handling from business rules, shared policy evaluation, and a balance journal that preserves deductions and reversals. PostgreSQL locking protects specific operations; remaining concurrency gaps define the next improvements.",
     sections: [
       {
         title: "Problem",
         paragraphs: [
-          "A leave request moves through more than a create-and-edit cycle. Employees submit and cancel requests, managers approve them, and HR administrators oversee balances and policy. The system needs to preserve those boundaries while keeping the underlying records consistent.",
+          "Employees, managers, and HR administrators need different views and permissions over the same leave lifecycle. Policy decisions and balance changes need to remain explainable as requests move through approval and cancellation.",
         ],
       },
       {
         title: "Requirements",
         bullets: [
-          "Employee, Manager, and HR Admin roles with distinct access boundaries.",
-          "An explicit approval lifecycle and cancellation workflow.",
-          "Leave balance transactions, audit records, and notifications.",
-          "Access and refresh authentication with rotation and revocation.",
+          "Employee eligibility previews, submission, history, withdrawal, and cancellation requests.",
+          "Manager approval, rejection, and cancellation approval; organization-wide leave oversight for HR.",
+          "Administration of departments, leave types, leave years, holidays, and settings, with current settings limitations explained below.",
+          "Authenticated, role-scoped operations with a traceable balance transaction history.",
+        ],
+      },
+      {
+        title: "Core workflow",
+        paragraphs: [
+          "Employees preview eligibility and submit requests. Managers approve or reject pending requests, with eligibility recalculated during approval. Employees can withdraw pending requests or request cancellation of approved leave; approved cancellations create balance reversals.",
+          "The application enforces PENDING → APPROVED, REJECTED, or WITHDRAWN, and APPROVED → CANCELLATION_PENDING → CANCELLED. PostgreSQL constraints do not currently enforce the complete state machine.",
         ],
       },
       {
         title: "Important engineering decisions",
-        paragraphs: [
-          "Keep business rules inside leave services. Routing, request validation, and authorization form the boundary; approval and balance behavior belong to the domain. This makes the same rules easier to reason about and integration-test.",
-          "Use PostgreSQL and Prisma for related records and balance transactions. A balance change is part of a business operation, so its consistency matters more than merely persisting an individual field.",
-          "Treat refresh tokens as a lifecycle. Rotation and revocation provide controls beyond issuing a long-lived JWT. They also introduce state that needs to be tested across refresh and logout flows.",
-        ],
-      },
-      {
-        title: "Data flow",
-        paragraphs: [
-          "The client sends a request to the API. Authentication establishes the session; authorization checks the role. Validated input reaches the leave service, which applies the relevant lifecycle and balance rules through Prisma and PostgreSQL. Notifications and audit logging support the resulting operation.",
-          "The diagram is a conceptual view of the supplied project architecture; it does not claim a particular event-delivery or transaction-boundary implementation.",
-        ],
-      },
-      {
-        title: "Technology choices",
         bullets: [
-          "React and TypeScript provide the interface and typed client logic.",
-          "Express keeps HTTP concerns separate from modular services.",
-          "PostgreSQL models related workflow data; Prisma provides the data access layer.",
-          "Centralized validation and error handling establish a consistent API boundary.",
+          "Separate routes, controllers, and services. Controllers do not access Prisma directly, and services work with application data rather than Express request objects.",
+          "Reuse calculateLeaveDays for submission and approval: day counting, policy validation, overlap checks, balance lookup, and eligibility stay in one service.",
+          "Use TanStack Query v5 with typed query-key factories, feature hooks, keepPreviousData, and invalidation organized around documented query-key roots.",
+          "Share audit and notification services across leave workflows. Some audit writes fall outside the active transaction, so this boundary still needs correction.",
         ],
       },
       {
-        title: "Challenges",
-        paragraphs: [
-          "The central engineering challenge is consistency across transitions: approving, cancelling, and checking balances all interact. Another is enforcing role boundaries on the API even when an action is hidden in the interface. These are the decisions that make this project more than a collection of endpoints.",
-        ],
-      },
-      {
-        title: "Testing strategy",
-        paragraphs: [
-          "The project includes 200+ backend tests and integration testing. The useful focus is behavior at the API boundary: session handling, authorization, validation, and workflow transitions.",
-          "The repository and test report have not been linked here yet. The test count is a supplied project metric, not a test run performed by this portfolio.",
-        ],
-      },
-      {
-        title: "Security considerations",
+        title: "Authentication and authorization",
         bullets: [
-          "Enforce role-based access at the API boundary.",
-          "Rotate and revoke refresh tokens as part of session management.",
-          "Validate input centrally and return consistent errors.",
-          "Keep audit history available for reviewing important actions.",
+          "JWT access and refresh tokens use separate secrets, pinned HS256 verification, and minimum secret-length validation.",
+          "Refresh tokens have unique jti values, SHA-256 hashed storage, rotation, and revocation. Reuse detection and token-family revocation are not implemented.",
+          "Access tokens contain the user subject rather than role or personal data. Authenticated requests retrieve the role from the database so authorization reflects role changes.",
+          "Route-level RBAC protects manager and HR APIs. Services independently check ownership and scope rather than trusting client-supplied employee IDs.",
+          "Login returns the same Invalid credentials response for unknown accounts and incorrect passwords.",
+          "The backend supports refresh-token rotation, but the frontend currently clears authentication on a 401 instead of calling the refresh endpoint.",
         ],
       },
       {
-        title: "Performance considerations",
+        title: "Balance ledger and reversals",
         paragraphs: [
-          "Correctness is the priority for balance-changing operations. Query shape, relation loading, and transaction scope are useful review points as usage grows. No throughput or latency benchmark is claimed.",
+          "EmployeeLeaveBalance stores the current materialized balance. LeaveBalanceTransaction records an append-only journal, with decimal leave quantities where appropriate.",
+          "Approval creates a debit. Cancellation preserves that original entry and adds a separate LEAVE_REVERSAL credit. The reversal amount comes from the original debit rather than recalculation against policy or holiday configuration that may have changed.",
+          "PostgreSQL transactions group approval changes, but the request-row lock does not fully protect the shared balance from concurrent approval of different requests.",
+        ],
+      },
+      {
+        title: "Concurrency protections and limits",
+        bullets: [
+          "Transaction advisory locks serialize leave-request-number allocation for a year. pg_advisory_xact_lock works even when no sequence row exists to lock.",
+          "Approval, rejection, and cancellation flows use SELECT … FOR UPDATE on the leave-request row, then re-check its status. This guards against duplicate transitions on the same request.",
+          "During approval recalculation, the current request is excluded from overlap results so it does not conflict with itself.",
+          "These protections do not lock the employee balance or prevent concurrent overlapping submissions. Request-number uniqueness and leave eligibility are separate invariants.",
+        ],
+      },
+      {
+        title: "Testing architecture and audit results",
+        paragraphs: [
+          "The backend creates a migrated and seeded PostgreSQL template database, then clones a database per Vitest worker. Advisory locking serializes database creation, workers use isolated databases, and explicit test-database naming guards protect cleanup.",
+          "In the supplied project audit, 102 DB-free API tests passed and 101 DB-backed tests were skipped because PostgreSQL was unavailable. The audit identifies 87 important integration tests as unexecuted. Frontend tests recorded 181 passes and 1 failure.",
+          "These are results from the supplied audit, not project tests executed by this portfolio. The test infrastructure is implemented; a successful run of all integration tests is not claimed.",
+        ],
+      },
+      {
+        title: "Known limitations and improvements",
+        bullets: [
+          "Protect the actual balance with locking, version checks, or conditional atomic updates. Different requests can validate the same available balance and oversell it; the existing balance version field is unused.",
+          "Prevent concurrent overlapping submissions. Conflict checks observe committed rows, and the request-number advisory lock does not protect this business rule.",
+          "Pass the active transaction client into audit writes. Some paths use the global Prisma client, risking audit records after rollback and connection-pool exhaustion or deadlock under concurrency.",
+          "Correct double subtraction when a holiday falls on a weekly-off day, half-day requests spanning multiple days, server-local timezone calculations, and future leave-year attribution.",
+          "Add login rate limiting and refresh-token reuse detection; align database and JWT expiry configuration and review per-request database lookup cost.",
+          "Connect frontend expiry handling to the refresh endpoint.",
+          "Implement or clearly limit configuration behavior. Among SystemSettings fields, only weekly_off_days currently affects business logic.",
+          "Resolve the failing frontend test and run the skipped database-backed suites before claiming successful integration verification.",
         ],
       },
       {
         title: "What I learned",
         paragraphs: [
-          "This project brought authentication, authorization, state transitions, and data integrity into one system. It strengthened my focus on modeling rules explicitly and making the backend testable beyond the happy path.",
-        ],
-      },
-      {
-        title: "Future improvements",
-        bullets: [
-          "Verify concurrency behavior with simultaneous approval and cancellation tests.",
-          "Document transaction boundaries and failure behavior for audit and notification delivery.",
-          "Add structured operational metrics and measured load tests before making scaling claims.",
+          "Locking a request protects that request, not every resource the workflow touches. The balance ledger makes changes explainable, while shared balances, overlap rules, and audit writes require their own concurrency and transaction boundaries. No production-scale, latency, or throughput claim is made.",
         ],
       },
     ],
@@ -135,103 +151,116 @@ export const projects: Project[] = [
     slug: "task-management",
     number: "02",
     name: "Task Management System",
-    kind: "BACKEND & PERFORMANCE",
+    kind: "AUTHENTICATION & API DESIGN",
     description:
-      "A task platform that uses caching and asynchronous jobs to keep work off the request path.",
-    technologies: ["React", "Node.js", "Express", "MongoDB", "Redis", "Bull"],
-    concepts: [
-      "Redis caching",
-      "Background queues",
-      "Query optimization",
-      "Pagination",
+      "A full-stack personal task manager with JWT authentication, coordinated token refresh, and user-scoped MongoDB persistence.",
+    technologies: [
+      "React",
+      "TypeScript",
+      "Node.js",
+      "Express",
+      "MongoDB",
+      "Mongoose",
+      "Zod",
+      "Axios",
     ],
-    metric: "Cache + queue architecture",
-    repo: "",
+    concepts: [
+      "JWT & refresh-token revocation",
+      "Concurrent refresh coordination",
+      "Zod validation & API errors",
+      "User-scoped limit + 1 pagination",
+    ],
+    metric: "Coordinated token refresh",
+    repo: "https://github.com/AkashChitale/task-management-system",
     flow: [
       "React client",
-      "Express API",
-      "JWT authentication",
-      "Task services",
+      "Express routes",
+      "Zod validation",
+      "Authentication",
+      "Controllers",
       "MongoDB",
     ],
-    supporting: ["Redis cache", "Bull queue", "Background worker"],
+    supporting: [
+      "Axios refresh coordination",
+      "User ownership checks",
+      "Centralized error handling",
+    ],
     overview:
-      "This project explores how a task application changes when the request path is treated as a limited resource. Pagination, database query improvements, Redis caching, and Bull background processing address different kinds of work.",
+      "A personal task manager for creating, listing, completing, and deleting tasks with optional due dates. Its most substantial engineering work is the authentication lifecycle: coordinating concurrent requests during access-token refresh, maintaining revocable refresh tokens, and enforcing user ownership at the API boundary.",
     sections: [
       {
         title: "Problem",
         paragraphs: [
-          "Task interfaces repeatedly read collections of records, while some work does not need to finish before an API response returns. The engineering problem is deciding which work belongs in a query, a cache, or an asynchronous job.",
+          "A small task application still needs to keep one user’s records separate from another’s and handle expired access tokens predictably. Concurrent API failures should not trigger duplicate refresh attempts within the same browser tab.",
         ],
       },
       {
         title: "Requirements",
         bullets: [
-          "JWT authentication with an access and refresh lifecycle.",
-          "Paginated task access and optimized database queries.",
-          "Redis caching for reusable reads.",
-          "Asynchronous background processing with Bull.",
+          "Create, list, complete or reopen, and delete the authenticated user’s tasks, with optional due dates.",
+          "JWT access and refresh authentication with server-side refresh-token revocation.",
+          "Validated API inputs, consistent errors, and user-scoped persistence.",
+          "Incremental task loading with offset pagination, due-date ordering, and client-side filtering.",
         ],
       },
       {
-        title: "Important engineering decisions",
+        title: "Authentication and refresh coordination",
         paragraphs: [
-          "Use pagination to bound the amount of data requested and rendered at once. It makes response size a deliberate part of the API contract.",
-          "Use Redis for cached reads and Bull for background processing. A cache avoids repeated work; a queue moves work out of the synchronous response path. These address different performance concerns.",
-          "Keep MongoDB as the application data store. A cache should accelerate reads without becoming the only durable source of task data.",
+          "Access tokens are sent through Authorization: Bearer. The refresh token is held in an HTTP-only cookie and stored against the user in MongoDB so the server can revoke it.",
+          "The Axios interceptor uses isRefreshing, failedQueue, and a _retry flag to coordinate concurrent failed requests behind one refresh operation within a browser tab. This avoids duplicate refresh attempts during access-token expiry.",
+          "Refresh produces a new access token only. Refresh-token rotation, reuse detection, token families, and hashed refresh-token storage are not implemented.",
         ],
       },
       {
-        title: "Data flow",
+        title: "Validation and error handling",
         paragraphs: [
-          "Authenticated requests reach the task service. Read paths can use Redis-backed caching and query MongoDB when data must be loaded. Work assigned to Bull is processed asynchronously by a worker, independently of the client response.",
-          "The diagram expresses the supplied components. Cache keys, TTLs, job payloads, and retry policies are intentionally not represented as verified implementation details.",
+          "Express routes apply Zod validation and authentication before controllers. Request bodies, query strings, and route parameters can be validated independently, and controllers consume validated data rather than raw Express inputs.",
+          "asyncHandler forwards asynchronous controller failures. AppError and centralized error mapping return a consistent API response shape.",
         ],
       },
       {
-        title: "Technology choices",
+        title: "Task ownership and pagination",
+        paragraphs: [
+          "MongoDB is the system of record, with User and Todo models accessed through Mongoose. Ownership checks use userId so authenticated users operate on their own tasks.",
+          "Task queries use skip/limit offset pagination and due-date ordering. Fetching limit + 1 records determines whether another page exists without a separate existence query.",
+          "This is not cursor or keyset pagination. Deep offsets and changing due dates remain scalability and correctness concerns; compound query indexes are an improvement area.",
+        ],
+      },
+      {
+        title: "Frontend and deployment",
+        paragraphs: [
+          "React 19, React Router 7, and TypeScript provide the SPA. An authentication context tracks auth state, Axios handles API requests, and task completion and deletion use optimistic updates. Filtering happens in the client.",
+          "The audited deployment places the frontend on Vercel and the Express 5 backend at a separate API domain. MongoDB persistence uses Mongoose 9. No traffic, latency, throughput, or measured speedup is claimed.",
+        ],
+      },
+      {
+        title: "Dormant reminder scaffolding",
+        paragraphs: [
+          "The repository contains Redis configuration, Bull queue code, a reminder worker, and an email service abstraction. They are not functioning reminder-delivery features: scheduling is hard-disabled, the worker cannot run from the compiled build, and email sending is a console-log stub.",
+          "There is no working application caching layer. Redis is dormant for normal requests, so Redis caching, production background jobs, and cache-driven API improvements are not presented as implemented.",
+        ],
+      },
+      {
+        title: "Testing status",
+        paragraphs: [
+          "No automated tests or CI pipeline existed at the time of the supplied audit. Adding backend tests for authentication, refresh coordination, ownership, validation, and pagination is a next step, not completed coverage.",
+        ],
+      },
+      {
+        title: "What I would improve",
         bullets: [
-          "Node.js and Express handle the API; React presents the task interface.",
-          "MongoDB stores task records and supports query-based retrieval.",
-          "Redis provides caching; Bull supplies the background queue.",
-        ],
-      },
-      {
-        title: "Challenges",
-        paragraphs: [
-          "Caching adds a freshness problem: a fast response is useful only if its data is appropriate for the request. Background processing adds another boundary where failures and retries need to be understood. These tradeoffs shape the next stage of the project.",
-        ],
-      },
-      {
-        title: "Testing strategy",
-        paragraphs: [
-          "A recommended test plan covers authenticated access, pagination boundaries, cache misses and invalidation, and worker failure behavior. Unlike ELMS, a test count or completed coverage report has not been supplied for this project.",
-        ],
-      },
-      {
-        title: "Security considerations",
-        paragraphs: [
-          "The API uses JWT access and refresh authentication. Cache keys and queries should be reviewed for user isolation. Queue payloads should avoid unnecessary sensitive data, and Redis should remain inaccessible to public clients. These are review priorities, not claims of a completed security audit.",
-        ],
-      },
-      {
-        title: "Performance considerations",
-        paragraphs: [
-          "The work includes optimized queries, caching, and API performance improvements. There is no supplied before-and-after benchmark, so this case study does not assign a numerical speedup. The next useful measurement is latency across warm-cache, cold-cache, and background-work scenarios.",
+          "Implement refresh-token rotation and reuse detection, hash stored refresh tokens, strengthen refresh-cookie security, and add authentication rate limiting.",
+          "Add compound indexes for user-scoped queries and replace offset pagination with keyset pagination.",
+          "Move filtering, search, and sorting server-side; improve concurrency handling for optimistic updates.",
+          "Add automated backend tests and a CI/CD pipeline.",
+          "Add health/readiness endpoints and graceful shutdown.",
+          "Either complete reminder processing or remove its dormant Redis/Bull scaffolding.",
         ],
       },
       {
         title: "What I learned",
         paragraphs: [
-          "Performance work is about locating avoidable work and choosing where it belongs. Query improvements, caching, and asynchronous processing each come with different consistency and operational tradeoffs.",
-        ],
-      },
-      {
-        title: "Future improvements",
-        bullets: [
-          "Measure cache hit rate and endpoint latency under a repeatable workload.",
-          "Review invalidation, retry, and idempotency behavior explicitly.",
-          "Add queue-depth monitoring and a documented cache-outage strategy.",
+          "The strongest work in this application is coordinating authentication recovery and making API boundaries explicit. Repository dependencies are not evidence of working features: cache, queue, and performance claims need an executable implementation and, where relevant, measurements.",
         ],
       },
     ],
@@ -334,7 +363,7 @@ export const projects: Project[] = [
       {
         title: "Future improvements",
         bullets: [
-          "Add the résumé and remaining project repository links.",
+          "Keep the résumé current.",
           "Publish engineering notes after drafting and review.",
           "Deploy static assets to S3 behind CloudFront; attach a separate read-only API only when it exists.",
         ],

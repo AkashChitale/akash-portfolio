@@ -4,14 +4,14 @@ export const site = {
   description:
     "Computer Engineering student focused on backend systems, scalable architecture, and performance. Explore the engineering work of Akash Chitale.",
   location: "Pune, India",
-  // Profile links recovered from the owner’s original portfolio. Empty links stay hidden.
+  // Public profile links confirmed by the owner. Empty links stay hidden.
   profiles: {
     github: "https://github.com/AkashChitale",
-    linkedin: "https://www.linkedin.com/in/akash-chitale-207a4a318/",
+    linkedin: "https://www.linkedin.com/in/akashchitale/",
     leetcode: "https://leetcode.com/u/Akash124124/",
     email: "akashchitale0@gmail.com",
   },
-  resume: { path: "/resume.pdf", available: false },
+  resume: { path: "/resume.pdf", available: true },
 } as const;
 
 export const navigation = [
@@ -33,7 +33,7 @@ export const snapshot = [
   { value: problemSolving.solved, label: "DSA problems solved" },
   { value: problemSolving.rating, label: "LeetCode rating · approx." },
   { value: "9.1", suffix: "/ 10", label: "CGPA · VIIT Pune" },
-  { value: "200+", label: "ELMS backend tests" },
+  { value: "3", label: "ELMS workflow roles" },
 ];
 
 export const experience = {

@@ -1,27 +1,27 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Icon from "../components/Icon.astro";
+import { site } from "../data/site";
 ---
 
 <BaseLayout
   title="Résumé — Akash Chitale"
-  description="Akash Chitale’s résumé will be available here soon."
+  description="View Akash Chitale’s résumé in your browser or download the PDF."
   noindex
 >
   <section class="notice-page container">
-    <p class="eyebrow mono">RÉSUMÉ / COMING SOON</p>
-    <h1>
-      The work is here.
-      <br />
-      The PDF is on its way.
-    </h1>
-    <p>
-      My résumé isn’t available to download yet. In the meantime, explore my
-      experience and project case studies.
-    </p>
-    <a href="/#experience" class="button button-primary">
-      Explore my experience
-      <Icon name="arrow" />
-    </a>
+    <p class="eyebrow mono">RÉSUMÉ / PDF</p>
+    <h1>Akash Chitale’s résumé.</h1>
+    <p>View the PDF in your browser or download a copy to review later.</p>
+    <div class="hero-actions">
+      <a href={site.resume.path} class="button button-primary">
+        View résumé
+        <Icon name="arrow" />
+      </a>
+      <a href={site.resume.path} class="button button-secondary" download>
+        Download PDF
+        <Icon name="download" />
+      </a>
+    </div>
   </section>
 </BaseLayout>
