@@ -8,3 +8,10 @@ dist/
 artifacts/
 *.log
 .pnpm-store/
+
+# Local AWS profiles and credentials must never be committed.
+.aws/
+credentials
+credentials.*
+*.pem
+*.key
