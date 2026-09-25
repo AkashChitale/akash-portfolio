@@ -14,10 +14,6 @@ pnpm dev
 Open the URL printed by Astro. Copy `.env.example` to `.env` for the optional endpoint. Set `SITE_URL` in the **build process environment** for the real canonical origin; `astro.config.mjs` reads `process.env.SITE_URL`, so a `.env` entry alone is not used for this value.
 
 ```sh
-pnpm lint
-pnpm typecheck
-pnpm test
-pnpm build
 pnpm verify
 pnpm preview
 node scripts/security-headers.mjs
@@ -67,7 +63,7 @@ WhiskerBond is professional experience, not a public-source project. The third c
 1. Review `profiles.github`, `profiles.linkedin`, `profiles.leetcode`, and `profiles.email` in `src/data/site.ts`; these are the owner-confirmed public links. Use full HTTPS profile URLs and a plain email address. Empty profile links are hidden.
 2. The supplied résumé is in `public/resume.pdf` with `site.resume.available` enabled. Navigation and hero links open the PDF in the browser; `/resume/` also offers an explicit download. Replace the PDF at the same path when updating it. The homepage does not preload it.
 3. All three confirmed repository URLs are centralized in `src/data/projects.ts`; an empty `repo` keeps that project’s repository actions hidden.
-4. The temporary default website origin is `https://akashchitale.dev`. Override it through the build environment `SITE_URL` when needed. The unchanged CI workflow supplies its own value: set the GitHub repository variable `SITE_URL` to the approved origin, or its existing placeholder fallback will override this local default. Domain configuration does not publish the site.
+4. The temporary default website origin is `https://akashchitale.dev`. Override it through the build environment `SITE_URL` when needed. Production CI requires an explicit repository variable `SITE_URL`: use the working S3 website origin now, then the HTTPS custom domain when live. Missing or placeholder deployment origins fail validation. Domain configuration does not publish the site.
 5. Review profile details, current/peak contest ratings, placement wording, and case-study descriptions for currency. The supplied metrics are static, not live.
 
 No photo or project screenshots are needed for this design. If adding images later, use Astro's image tooling, explicit dimensions, descriptive alt text, and responsive assets. Do not publish broken image placeholders. Open Graph and X title/description metadata are present; a social image is not generated. A custom social image can be added later when available.
@@ -117,23 +113,17 @@ Semantic landmarks, a keyboard skip link, visible focus indicators, labeled them
 
 Browser QA should cover 320, 375, 768, 1024, and 1440+ widths, keyboard use, 200% text resizing, both themes, no JavaScript, and unavailable API states. A passing lint/build is not an accessibility certification.
 
-## CI
+## CI/CD and AWS deployment
 
-`.github/workflows/ci.yml` runs installation from the frozen lockfile, lint, Astro/TypeScript checks, the API tests, a static build, and output verification. Node and pnpm caching is enabled. A failed check fails the workflow. The `dist` artifact is retained for seven days. Set the GitHub repository variable `SITE_URL` before deployment. CI validates the site but does **not** deploy it or require AWS credentials.
+The existing [workflow](.github/workflows/ci.yml) checks PRs and deploys successful pushes to main or deliberate manual runs on main. It installs from the frozen lockfile, runs `pnpm verify`, and uploads the verified `dist/` for three days. The deployment job downloads that exact artifact ID, authenticates with GitHub OIDC, synchronizes only generated files to the configured S3 bucket, and verifies bytes, MIME/cache metadata, public routes, and 404 responses. PRs do not receive deployment credentials.
 
-The repository includes a lockfile; commit it with source changes. Only the required `esbuild` and `sharp` dependency install scripts are allowed in `pnpm-workspace.yaml`. Review dependency updates and run `pnpm audit` periodically. All framework/compiler/checker dependencies run at build time, not as an exposed production server.
+`pnpm verify` is the local pre-push command: lint, typecheck, tests, one production build, and output verification. Use `pnpm verify:build` only when validating an existing build. Neither command needs AWS credentials. The normal release command is `git push origin main`.
 
-## Future AWS deployment
+Configure repository variables `AWS_REGION`, `AWS_ROLE_ARN`, `S3_BUCKET`, and `SITE_URL` before the first deployment. Do not add permanent AWS keys. `CLOUDFRONT_DISTRIBUTION_ID` is optional and stays absent until CloudFront exists. Production syncs are serialized without cancelling an active deployment. The dedicated bucket is reconciled with `--delete`; it must not contain unrelated files.
 
-```text
-Developer → GitHub → CI checks → S3 static assets
-                                  ↑
-Reader → Route 53 → CloudFront → private S3 REST origin
-                       ↑
-                 ACM TLS certificate
-```
+See [deployment/AWS.md](deployment/AWS.md) for exact IAM policies, OIDC subject verification, GitHub setup, cache rules, first-deploy checks, rollback, and the future Route 53 → CloudFront → OAC → private S3 migration. The current public site uses the existing S3 website endpoint; no AWS resources are provisioned by this repository task.
 
-See [deployment/AWS.md](deployment/AWS.md) for concrete routing, caching, headers, permissions, and release steps. No AWS resources or paid services were created. The portfolio needs no EC2 instance.
+The repository includes a lockfile; commit it with dependency changes. Only the required dependency install scripts are allowed in `pnpm-workspace.yaml`. Review action pins and dependency updates deliberately.
 
 ## Future Systems Lab
 
