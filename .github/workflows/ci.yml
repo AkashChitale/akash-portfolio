@@ -40,6 +40,9 @@ jobs:
       github.ref == 'refs/heads/main' &&
       (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-24.04
+    environment:
+      name: production
+      url: ${{ vars.SITE_URL }}
     timeout-minutes: 20
     permissions:
       contents: read
