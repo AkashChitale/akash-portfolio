@@ -39,21 +39,23 @@ export const snapshot = [
 export const experience = {
   company: "WhiskerBond",
   role: "Software Engineering Intern",
+  period: "Sep 2026 – Present",
+  current: true,
   area: "Pet-care platform · Product engineering",
   summary:
-    "Contributed to React interfaces and backend APIs for a community-driven pet-care platform.",
+    "Build and refine Community experiences across React interfaces and backend APIs.",
   contributions: [
     {
-      title: "Feeds that keep moving.",
-      text: "Built community feed experiences using cursor-based pagination and TanStack Query infinite queries.",
+      title: "Community feeds & discovery",
+      text: "Built cursor-paginated feeds with TanStack Query infinite queries. Worked on feed ranking and personalization using pet relevance, content interests, interaction history and freshness, with diversity and repetition controls.",
     },
     {
-      title: "Interactions that feel immediate.",
-      text: "Worked on likes, bookmarks, and comments with optimistic updates and authorization-aware flows.",
+      title: "Social interactions & identity",
+      text: "Implemented likes, bookmarks and comments with authorization-aware flows and optimistic updates where appropriate. Developed public-profile flows, including username generation, sanitization and collision handling for Google-created accounts.",
     },
     {
-      title: "Engineering in an existing codebase.",
-      text: "Navigated and debugged a production codebase, with responsive experiences across mobile and desktop.",
+      title: "Product engineering in an existing codebase",
+      text: "Debugged across frontend and backend boundaries within an existing production codebase. Connected Community content to public profiles through deep links and refined responsive experiences for desktop and mobile.",
     },
   ],
   tags: ["React", "Backend APIs", "TanStack Query", "Authorization"],
