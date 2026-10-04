@@ -11,20 +11,11 @@ import { experience } from "../data/site";
   />
   <div class="experience-grid">
     <div class="experience-meta">
-      <span class="experience-line" aria-hidden="true"></span>
+      <span class="experience-line" data-current={experience.current} aria-hidden="true"></span>
       <p class="mono">PROFESSIONAL EXPERIENCE</p>
       <h3>{experience.company}</h3>
       <p class="role">
         {experience.role} · <span class="experience-period">{experience.period}</span>
-        {experience.current && (
-          <>
-            {" · "}
-            <span class="experience-current">
-              <span class="experience-current-dot" aria-hidden="true"></span>
-              Current
-            </span>
-          </>
-        )}
       </p>
       <p class="muted">{experience.area}</p>
       <div class="tags">
@@ -54,17 +45,22 @@ import { experience } from "../data/site";
   .experience-period {
     white-space: nowrap;
   }
-  .experience-current {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    white-space: nowrap;
+  .experience-line[data-current="true"]::before {
+    animation: experience-pulse 4s ease-in-out infinite;
   }
-  .experience-current-dot {
-    width: 6px;
-    height: 6px;
-    flex-shrink: 0;
-    border-radius: 50%;
-    background: var(--accent);
+  @keyframes experience-pulse {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.72;
+      transform: scale(0.92);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .experience-line[data-current="true"]::before {
+      animation: none;
+    }
   }
 </style>
